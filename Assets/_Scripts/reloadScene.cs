@@ -20,8 +20,8 @@ public class reloadScene : MonoBehaviour {
 	private AsyncOperation scene;
 
 	void Start() {
-		scene = SceneManager.LoadSceneAsync("First", LoadSceneMode.Single);
-        scene.allowSceneActivation = false;
+		//scene = SceneManager.LoadSceneAsync("First", LoadSceneMode.Single);
+        //scene.allowSceneActivation = false;
 	}
 
 	// Use this for initialization
@@ -50,9 +50,10 @@ public class reloadScene : MonoBehaviour {
 
     void OnClickTrigger(object sender, ClickedEventArgs e) {
         Debug.Log("Clicked trigger!");
-		scene.allowSceneActivation = true;
+        //scene.allowSceneActivation = true;
+        SceneManager.LoadScene("First");
 
-        
+
     }
 
 	
