@@ -1,62 +1,64 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Valve.VR;
 using UnityEngine.SceneManagement;
 
 
-//
-//	1) In your scene you should have controllers attached to the camera rig, eg:
-//	[CameraRig]
-//	-- Controller (Left)
-//
-//	2) Ensure that controller has both a "SteamVR_TrackedObject" script AND "SteamVR_TrackedController" script
-//
-//	3) Add this script to the controller, and modify it as necessary
-//
 
-[RequireComponent(typeof(SteamVR_TrackedController))]
+
 public class reloadScene : MonoBehaviour {
 
-	private AsyncOperation scene;
+    //private AsyncOperation scene;
 
-	void Start() {
-		//scene = SceneManager.LoadSceneAsync("First", LoadSceneMode.Single);
-        //scene.allowSceneActivation = false;
-	}
+    private Valve.VR.EVRButtonId gripButton = Valve.VR.EVRButtonId.k_EButton_Grip;
+    private Valve.VR.EVRButtonId triggerButton = Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger;
 
-	// Use this for initialization
-    void OnEnable() {
-        SteamVR_TrackedController controller = GetComponent<SteamVR_TrackedController>();
-        controller.TriggerClicked += OnClickTrigger;
-        controller.TriggerUnclicked += OnUnclickTrigger;
-        controller.PadClicked += OnPadClicked;
-    }
+    private SteamVR_Controller.Device controller { get { return SteamVR_Controller.Input((int)trackedObj.index); } }
+    private SteamVR_TrackedObject trackedObj;
 
-    void OnDisable() {
-        SteamVR_TrackedController controller = GetComponent<SteamVR_TrackedController>();
-        controller.TriggerClicked -= OnClickTrigger;
-        controller.TriggerUnclicked -= OnUnclickTrigger;
-        controller.PadClicked -= OnPadClicked;
-    }	
+    void Start() {
+        trackedObj = GetComponent<SteamVR_TrackedObject>();
 
-    void OnPadClicked(object sender, ClickedEventArgs e) {
-        Debug.Log("Pad Clicked! X: " + e.padX + " " + e.padY);
-    }
-
-
-	void OnUnclickTrigger(object sender, ClickedEventArgs e) {
-        Debug.Log("Unclicked trigger!");
-    }
-
-    void OnClickTrigger(object sender, ClickedEventArgs e) {
-        Debug.Log("Clicked trigger!");
-        //scene.allowSceneActivation = true;
-        SceneManager.LoadScene("First");
-
+        OpenVR.System.GetTrackedDeviceIndexForControllerRole(ETrackedControllerRole.RightHand);
+        OpenVR.System.GetTrackedDeviceIndexForControllerRole(ETrackedControllerRole.LeftHand);
 
     }
 
-	
+    // Update is called once per frame
+    void Update()
+    {
+        if (controller == null)
+        {
+            Debug.Log("Controller not initialized");
+            return;
+        }
 
+        if (controller.GetPressDown(triggerButton))
+        {
+            Debug.Log("Trigger Down");
+
+        }
+
+        if (controller.GetPressUp(triggerButton))
+        {
+            Debug.Log("Trigger up");
+            SceneManager.LoadScene("First");
+        }
+
+
+        if (controller.GetPressDown(gripButton))
+        {
+            print("gripped!");
+        }
+
+        if (controller.GetPressUp(gripButton))
+        {
+            print("ungripped!");
+            
+        }
+
+    }
+
+
+    
 
 }
